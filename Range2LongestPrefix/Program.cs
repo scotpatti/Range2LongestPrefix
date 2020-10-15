@@ -64,7 +64,8 @@ namespace Range2LongestPrefix
             }
             if (endingAllSame)
             {
-                var response = string.Format("Prefix = {0} (/{1})", a.toStr().Substring(0, lastMatch + 1), lastMatch + 1);
+                var response = string.Format("Prefix = {0} (/{1})", a.toStr().Substring(0, lastMatch + 1), lastMatch + 1) +
+                    "\r\n" + a.toIpAddr() + (lastMatch + 1);
                 result.Add(response);
                 return; 
             }
@@ -80,6 +81,8 @@ namespace Range2LongestPrefix
             }
         }
     }
+
+    #region Extension Methods to char[]
 
     /// <summary>
     /// Some extension methods to char[] that I found useful. 
@@ -124,6 +127,59 @@ namespace Range2LongestPrefix
                 sb.Append(str[i]);
             }
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Because I wanted to see it as an IP address and a binary string. 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string toIpAddr(this char[] str)
+        {
+            StringBuilder sb = new StringBuilder();
+            uint b1 = 0;
+            for (int i=0; i< 8; i++)
+            {
+                b1 = AppendChar(b1, str, i);
+            }
+            uint b2 = 0;
+            for (int i=8; i<16; i++)
+            {
+                b2 = AppendChar(b2, str, i);
+            }
+            uint b3 = 0;
+            for (int i=16; i<24; i++)
+            {
+                b3 = AppendChar(b3, str, i);
+            }
+            uint b4 = 0; 
+            for (int i=24; i<32; i++)
+            {
+                b4 = AppendChar(b4, str, i);
+            }
+            sb.Append(b1).Append(".").Append(b2).Append(".").Append(b3).Append(".").Append(b4).Append("/");
+            return sb.ToString();
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Boolean logic + shift for creating IP Address
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="str"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        public static uint AppendChar(uint b, char[] str, int i)
+        {
+            b = b << 1;
+            if (i >= str.Length || str[i] == '0')
+                b = b | 0;
+            else
+            {
+                b |= 1;
+            }
+            return b;
         }
         
         public static char[] copyStr(this char[] str)
