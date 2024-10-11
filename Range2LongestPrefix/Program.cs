@@ -29,9 +29,9 @@ namespace Range2LongestPrefix
                 Console.WriteLine(ERROR_MSG);
                 return;
             }
+            //Get the prefixes
             Program p = new Program();
             p.GetPrefixes(a, b);
-            //System.Diagnostics.Debug.WriteLine(result);
             foreach (var s in result)
             {
                 if (!string.IsNullOrEmpty(s)) Console.WriteLine(s);
@@ -71,7 +71,7 @@ namespace Range2LongestPrefix
             }
             else
             {
-                //split the prefix into two ranges and run this on both ranges:
+                //split the prefix into two ranges and run this recursively on both ranges:
                 var a1 = a.copyStr();
                 var b1 = a.fillOnes(lastMatch);
                 var a2 = a.fillZeros(lastMatch);
@@ -172,6 +172,9 @@ namespace Range2LongestPrefix
         /// <returns></returns>
         public static uint AppendChar(uint b, char[] str, int i)
         {
+            //The left-shift operation discards the high-order bits that are
+            //outside the range of the result type and sets the low-order empty
+            //bit positions to zero
             b = b << 1;
             if (i >= str.Length || str[i] == '0')
                 b = b | 0;
@@ -181,7 +184,12 @@ namespace Range2LongestPrefix
             }
             return b;
         }
-        
+
+        /// <summary>
+        /// Copy a char array - Extension method
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static char[] copyStr(this char[] str)
         {
             char[] res = new char[str.Length];
